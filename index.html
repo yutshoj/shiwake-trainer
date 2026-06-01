@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="日商簿記3級の仕訳を反復練習できるトレーニングアプリ" />
+    <meta name="theme-color" content="#2f5f9f" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="仕訳トレーナー" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>簿記トレーナー</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/app-icon-180.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">日商簿記3級</p>
+        <h1>仕訳トレーナー</h1>
+      </div>
+      <div class="header-actions" aria-label="学習モード">
+        <button class="icon-button is-active" type="button" title="問題へ移動">Q</button>
+        <button id="resetAnswer" class="icon-button" type="button" title="リセット">R</button>
+        <button id="scoreShortcut" class="icon-button" type="button" title="採点">S</button>
+      </div>
+    </header>
+
+    <main class="study-shell">
+      <section class="question-pane" aria-labelledby="questionTitle">
+        <div class="course-row" aria-label="学習範囲">
+          <label>
+            級
+            <select id="gradeSelect">
+              <option value="grade3">3級</option>
+            </select>
+          </label>
+          <label>
+            項目
+            <select id="categorySelect"></select>
+          </label>
+          <label>
+            レベル
+            <select id="levelSelect"></select>
+          </label>
+          <div class="bank-count">
+            <span id="categoryCount">0問</span>
+            <small id="categoryDescription">項目を選択してください</small>
+          </div>
+        </div>
+
+        <div class="progress-row">
+          <span id="progressText">1 / 4</span>
+          <div class="progress-track" aria-hidden="true">
+            <span id="progressBar"></span>
+          </div>
+        </div>
+
+        <article class="problem-panel">
+          <div>
+            <p class="eyebrow">問題文</p>
+            <h2 id="questionTitle"></h2>
+          </div>
+          <p id="questionBody" class="question-body"></p>
+        </article>
+
+        <div class="account-palette" aria-label="選択勘定科目一覧">
+          <div class="palette-head">
+            <h3>選択勘定科目一覧</h3>
+            <span>仕訳表の勘定科目欄から選択</span>
+          </div>
+          <div id="accountOptions" class="account-chip-list"></div>
+        </div>
+      </section>
+
+      <section class="journal-pane" aria-label="仕訳メモ">
+        <div class="memo-strip">
+          <button id="prevQuestion" class="ghost-button" type="button">前へ</button>
+          <div>
+            <p class="eyebrow">仕訳表</p>
+            <strong id="topicLabel">現金取引</strong>
+          </div>
+          <button id="nextQuestion" class="ghost-button" type="button">次へ</button>
+        </div>
+
+        <div id="journalBoard" class="journal-board">
+          <div class="journal-head">
+            <span>借方</span>
+            <span>金額</span>
+            <span>貸方</span>
+            <span>金額</span>
+          </div>
+          <div id="journalRows" class="journal-rows"></div>
+          <div class="journal-row journal-total">
+            <span>借方合計</span>
+            <span id="debitTotal">0</span>
+            <span>残高</span>
+            <span id="creditTotal">0</span>
+          </div>
+        </div>
+        <div class="journal-actions">
+          <button id="addJournalRow" class="mini-button" type="button">行を追加</button>
+          <button id="clearJournal" class="mini-button" type="button">仕訳をクリア</button>
+          <button id="toggleMemo" class="mini-button" type="button">メモを開く</button>
+          <button id="toggleCalculator" class="mini-button" type="button">電卓を開く</button>
+          <span id="balanceHint">一致待ち</span>
+          <button id="checkAnswer" class="primary-button" type="button">採点する</button>
+        </div>
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+
+        <section id="calculatorPanel" class="calculator-panel" aria-label="電卓">
+          <div class="calculator-info">
+            <div>
+              <p class="eyebrow">電卓</p>
+              <strong id="calculatorHint">金額欄を選ぶと結果を入力できます</strong>
+            </div>
+            <div id="calculatorDisplay" class="calculator-display" aria-live="polite">0</div>
+            <button id="applyCalculator" class="mini-button" type="button">金額へ入力</button>
+          </div>
+          <div class="calculator-keys" aria-label="電卓キー">
+            <button class="calc-button is-clear" type="button" data-calc-action="clear">C</button>
+            <button class="calc-button" type="button" data-calc-action="backspace">消</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="000">000</button>
+            <button class="calc-button is-operator" type="button" data-calc-action="operator" data-value="/">÷</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="7">7</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="8">8</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="9">9</button>
+            <button class="calc-button is-operator" type="button" data-calc-action="operator" data-value="*">×</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="4">4</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="5">5</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="6">6</button>
+            <button class="calc-button is-operator" type="button" data-calc-action="operator" data-value="-">-</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="1">1</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="2">2</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="3">3</button>
+            <button class="calc-button is-operator" type="button" data-calc-action="operator" data-value="+">+</button>
+            <button class="calc-button is-wide" type="button" data-calc-action="number" data-value="0">0</button>
+            <button class="calc-button" type="button" data-calc-action="number" data-value="00">00</button>
+            <button class="calc-button is-equals" type="button" data-calc-action="equals">=</button>
+          </div>
+        </section>
+
+        <section id="resultPanel" class="result-panel" aria-live="polite">
+          <div class="result-panel-head">
+            <p class="eyebrow">採点結果</p>
+            <strong id="resultTitle">採点すると解説が表示されます</strong>
+          </div>
+          <div id="resultSummary" class="result-summary">
+            <span>科目</span>
+            <span>金額</span>
+            <span>貸借</span>
+          </div>
+          <div class="answer-preview">
+            <p>正解</p>
+            <strong id="correctAnswerText">-</strong>
+          </div>
+          <div class="explanation-box">
+            <p>なぜ借方？なぜ貸方？</p>
+            <ul id="explanationList"></ul>
+          </div>
+        </section>
+
+        <div id="memoPanel" class="canvas-wrap">
+          <div class="memo-tools" aria-label="メモツール">
+            <button class="tool-button is-active" type="button" data-tool="pen" title="ペン">ペン</button>
+            <button class="tool-button" type="button" data-tool="eraser" title="消しゴム">消す</button>
+            <button class="tool-button" type="button" id="clearCanvas" title="メモを消去">消去</button>
+            <span class="rail-divider"></span>
+            <button class="color-dot is-active" type="button" data-color="#ef4444" style="--dot: #ef4444" title="赤"></button>
+            <button class="color-dot" type="button" data-color="#2563eb" style="--dot: #2563eb" title="青"></button>
+            <button class="color-dot" type="button" data-color="#111827" style="--dot: #111827" title="黒"></button>
+          </div>
+          <div class="memo-canvas">
+            <canvas id="scratchCanvas" width="820" height="620" aria-label="計算メモ"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="./question-bank.js"></script>
+    <script src="./pdf-question-pack.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

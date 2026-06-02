@@ -728,6 +728,55 @@ h1 {
   text-align: right;
 }
 
+.calculator-memory-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(42px, auto));
+  gap: 6px;
+}
+
+.memory-recall,
+.memory-button {
+  min-height: 30px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d4dbe7;
+  border-radius: 7px;
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.memory-recall {
+  min-width: 0;
+  justify-content: flex-start;
+  overflow: hidden;
+  color: #1f4f8b;
+  background: #eef5ff;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-recall.is-empty {
+  color: var(--subtle);
+  background: #f8fafc;
+}
+
+.memory-button {
+  color: #24324a;
+  background: white;
+}
+
+.memory-recall:hover,
+.memory-recall:focus-visible,
+.memory-button:hover,
+.memory-button:focus-visible {
+  border-color: #9db4d4;
+  background: #f1f6ff;
+  outline: 0;
+}
+
 .calculator-keys {
   display: grid;
   grid-template-columns: repeat(4, minmax(48px, 1fr));

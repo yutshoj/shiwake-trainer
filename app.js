@@ -11,6 +11,7 @@ const state = {
   calculatorOpen: false,
   calculatorExpression: "",
   calculatorJustEvaluated: false,
+  calculatorMemory: 0,
   activeAmount: null,
   tool: "pen",
   color: "#ef4444",
@@ -46,6 +47,7 @@ const els = {
   calculatorPanel: document.querySelector("#calculatorPanel"),
   calculatorHint: document.querySelector("#calculatorHint"),
   calculatorDisplay: document.querySelector("#calculatorDisplay"),
+  calculatorMemory: document.querySelector("#calculatorMemory"),
   applyCalculator: document.querySelector("#applyCalculator"),
   topicLabel: document.querySelector("#topicLabel"),
   prevQuestion: document.querySelector("#prevQuestion"),
@@ -473,7 +475,7 @@ function formatCalculatorValue(value) {
 
 function calculatorText() {
   if (!state.calculatorExpression) return "0";
-  if (/^\d+(?:\.\d+)?$/.test(state.calculatorExpression)) {
+  if (/^-?\d+(?:\.\d+)?$/.test(state.calculatorExpression)) {
     return Number(state.calculatorExpression).toLocaleString("ja-JP");
   }
 
@@ -482,6 +484,18 @@ function calculatorText() {
 
 function updateCalculatorDisplay() {
   els.calculatorDisplay.textContent = calculatorText();
+  updateCalculatorMemoryDisplay();
+}
+
+function memoryText() {
+  return state.calculatorMemory.toLocaleString("ja-JP");
+}
+
+function updateCalculatorMemoryDisplay() {
+  if (!els.calculatorMemory) return;
+  els.calculatorMemory.textContent = `MR ${memoryText()}`;
+  els.calculatorMemory.classList.toggle("is-empty", state.calculatorMemory === 0);
+  els.calculatorMemory.title = `${memoryText()}を電卓へ呼び出し`;
 }
 
 function applyOperator(values, ops) {
@@ -503,9 +517,10 @@ function applyOperator(values, ops) {
 
 function calculateExpression(expression) {
   const clean = expression.replace(/[+\-*/]+$/, "");
-  if (!clean || !/^\d+(?:\.\d+)?(?:[+\-*/]\d+(?:\.\d+)?)*$/.test(clean)) return null;
+  const normalized = clean.startsWith("-") ? `0${clean}` : clean;
+  if (!normalized || !/^\d+(?:\.\d+)?(?:[+\-*/]\d+(?:\.\d+)?)*$/.test(normalized)) return null;
 
-  const tokens = clean.match(/\d+(?:\.\d+)?|[+\-*/]/g);
+  const tokens = normalized.match(/\d+(?:\.\d+)?|[+\-*/]/g);
   const values = [];
   const ops = [];
   const precedence = { "+": 1, "-": 1, "*": 2, "/": 2 };
@@ -530,7 +545,52 @@ function calculateExpression(expression) {
   return Number.isFinite(result) ? result : null;
 }
 
+function currentCalculatorValue() {
+  if (!state.calculatorExpression) return 0;
+  return calculateExpression(state.calculatorExpression);
+}
+
+function handleCalculatorMemoryAction(action) {
+  if (action === "memory-clear") {
+    state.calculatorMemory = 0;
+    updateCalculatorHint("メモリーをクリアしました");
+    return true;
+  }
+
+  if (action === "memory-recall") {
+    state.calculatorExpression = formatCalculatorValue(state.calculatorMemory);
+    state.calculatorJustEvaluated = true;
+    updateCalculatorHint("メモリー値を呼び出しました");
+    return true;
+  }
+
+  const value = currentCalculatorValue();
+  if (value === null) {
+    updateCalculatorHint("式を確認してからメモリーへ入れてください");
+    return true;
+  }
+
+  if (action === "memory-add") {
+    state.calculatorMemory += value;
+    updateCalculatorHint(`M+ ${formatCalculatorValue(value)}を追加しました`);
+    return true;
+  }
+
+  if (action === "memory-subtract") {
+    state.calculatorMemory -= value;
+    updateCalculatorHint(`M- ${formatCalculatorValue(value)}を差し引きました`);
+    return true;
+  }
+
+  return false;
+}
+
 function handleCalculatorAction(action, value) {
+  if (handleCalculatorMemoryAction(action)) {
+    updateCalculatorDisplay();
+    return;
+  }
+
   if (action === "number") {
     if (state.calculatorJustEvaluated) {
       state.calculatorExpression = "";

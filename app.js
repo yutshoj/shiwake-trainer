@@ -27,7 +27,6 @@ const els = {
   categoryDescription: document.querySelector("#categoryDescription"),
   title: document.querySelector("#questionTitle"),
   body: document.querySelector("#questionBody"),
-  accountOptions: document.querySelector("#accountOptions"),
   checkAnswer: document.querySelector("#checkAnswer"),
   feedback: document.querySelector("#feedback"),
   journalBoard: document.querySelector("#journalBoard"),
@@ -155,7 +154,6 @@ function setQuestion(index) {
   els.body.textContent = question.body;
   els.topicLabel.textContent = `${question.topic} / ${level.label}`;
 
-  renderOptions(accountChoicesForQuestion(question));
   renderJournal();
   updateResultPanel(null);
 }
@@ -170,20 +168,8 @@ function resetEntry(renderAll = true) {
   updateCalculatorHint();
 
   if (!renderAll) return;
-  renderOptions(accountChoicesForQuestion(currentQuestion()));
   renderJournal();
   updateResultPanel(null);
-}
-
-function renderOptions(choices) {
-  els.accountOptions.replaceChildren();
-
-  choices.forEach((choice) => {
-    const chip = document.createElement("span");
-    chip.className = "account-chip";
-    chip.textContent = choice;
-    els.accountOptions.append(chip);
-  });
 }
 
 function renderJournal() {
@@ -324,6 +310,7 @@ function clearScoreState() {
   els.feedback.textContent = "";
   els.feedback.className = "feedback";
   els.resultPanel.className = "result-panel";
+  els.resultPanel.hidden = true;
   els.journalBoard.className = "journal-board";
   els.resultTitle.textContent = "採点すると解説が表示されます";
   els.correctAnswerText.textContent = "-";
@@ -415,6 +402,7 @@ function formatAnswerText(entries) {
 function updateResultPanel(result) {
   const question = currentQuestion();
   const answer = answerEntries(question);
+  els.resultPanel.hidden = !result;
   els.correctAnswerText.textContent = result ? formatAnswerText(answer) : "-";
   els.explanationList.replaceChildren();
 

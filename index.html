@@ -17,9 +17,29 @@
   </head>
   <body>
     <header class="app-header">
-      <div>
+      <div class="header-title">
         <p class="eyebrow">日商簿記3級</p>
         <h1>仕訳トレーナー</h1>
+      </div>
+      <div class="course-row" aria-label="学習範囲">
+        <label>
+          級
+          <select id="gradeSelect">
+            <option value="grade3">3級</option>
+          </select>
+        </label>
+        <label>
+          項目
+          <select id="categorySelect"></select>
+        </label>
+        <label>
+          レベル
+          <select id="levelSelect"></select>
+        </label>
+        <div class="bank-count">
+          <span id="categoryCount">0問</span>
+          <small id="categoryDescription">項目を選択してください</small>
+        </div>
       </div>
       <div class="header-actions" aria-label="学習モード">
         <button class="icon-button is-active" type="button" title="問題へ移動">Q</button>
@@ -30,27 +50,6 @@
 
     <main class="study-shell">
       <section class="question-pane" aria-labelledby="questionTitle">
-        <div class="course-row" aria-label="学習範囲">
-          <label>
-            級
-            <select id="gradeSelect">
-              <option value="grade3">3級</option>
-            </select>
-          </label>
-          <label>
-            項目
-            <select id="categorySelect"></select>
-          </label>
-          <label>
-            レベル
-            <select id="levelSelect"></select>
-          </label>
-          <div class="bank-count">
-            <span id="categoryCount">0問</span>
-            <small id="categoryDescription">項目を選択してください</small>
-          </div>
-        </div>
-
         <div class="progress-row">
           <span id="progressText">1 / 4</span>
           <div class="progress-track" aria-hidden="true">
@@ -66,13 +65,6 @@
           <p id="questionBody" class="question-body"></p>
         </article>
 
-        <div class="account-palette" aria-label="選択勘定科目一覧">
-          <div class="palette-head">
-            <h3>選択勘定科目一覧</h3>
-            <span>仕訳表の勘定科目欄から選択</span>
-          </div>
-          <div id="accountOptions" class="account-chip-list"></div>
-        </div>
       </section>
 
       <section class="journal-pane" aria-label="仕訳メモ">
@@ -142,7 +134,7 @@
           </div>
         </section>
 
-        <section id="resultPanel" class="result-panel" aria-live="polite">
+        <section id="resultPanel" class="result-panel" aria-live="polite" hidden>
           <div class="result-panel-head">
             <p class="eyebrow">採点結果</p>
             <strong id="resultTitle">採点すると解説が表示されます</strong>

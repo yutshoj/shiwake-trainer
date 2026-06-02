@@ -515,20 +515,23 @@ h1 {
 }
 
 .journal-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, max-content) max-content minmax(116px, 132px);
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .journal-actions .primary-button {
-  min-width: 150px;
-  margin-left: auto;
+  min-width: 0;
+  min-height: 38px;
+  padding: 0 16px;
+  font-size: 0.92rem;
+  justify-self: stretch;
 }
 
 .mini-button {
-  min-height: 38px;
-  padding: 0 12px;
+  min-height: 36px;
+  padding: 0 10px;
   color: var(--blue);
   background: white;
   border: 1px solid #cbd5e1;
@@ -538,15 +541,17 @@ h1 {
 }
 
 #balanceHint {
-  min-height: 38px;
-  padding: 8px 12px;
+  min-height: 36px;
+  padding: 7px 10px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   border: 1px solid #d8dee8;
   border-radius: 8px;
   color: var(--subtle);
   background: rgba(255, 255, 255, 0.82);
   font-weight: 900;
+  white-space: nowrap;
 }
 
 #balanceHint.is-balanced {
@@ -841,6 +846,10 @@ canvas {
     min-height: 640px;
     border-top: 2px solid #1f2937;
   }
+
+  .journal-actions {
+    grid-template-columns: repeat(4, max-content) max-content minmax(116px, 132px);
+  }
 }
 
 @media (max-width: 720px) {
@@ -907,6 +916,15 @@ canvas {
 }
 
 @media (max-width: 560px) {
+  .journal-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #balanceHint,
+  .journal-actions .primary-button {
+    grid-column: span 1;
+  }
+
   .calculator-panel.is-open {
     grid-template-columns: 1fr;
   }

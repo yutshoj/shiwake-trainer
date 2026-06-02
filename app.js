@@ -1,5 +1,5 @@
 const bank = QUESTION_BANK.grade3;
-const MIN_JOURNAL_ROWS = 3;
+const MIN_JOURNAL_ROWS = 2;
 
 const state = {
   index: 0,
@@ -197,7 +197,7 @@ function createAccountCell(row, index, side) {
   const button = document.createElement("button");
   button.className = "journal-account-button";
   button.type = "button";
-  button.textContent = row[side] || "勘定科目を選択";
+  button.textContent = row[side] || "選択";
   button.addEventListener("click", (event) => {
     event.stopPropagation();
     const isOpen = state.openPicker?.index === index && state.openPicker?.side === side;
